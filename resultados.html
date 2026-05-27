@@ -139,6 +139,20 @@
 
     .btn-outline:hover { border-color: var(--dark); color: var(--dark); }
 
+    .btn-export {
+      background: var(--dark);
+      border-color: var(--dark);
+      color: var(--gold);
+    }
+
+    .btn-export:hover { filter: brightness(1.15); border-color: var(--dark); color: var(--gold); }
+
+    .btn-export:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      filter: none;
+    }
+
     .btn-danger {
       border-color: #ddd7ce;
       color: #c03818;
@@ -351,6 +365,7 @@
     <span class="toolbar-left" id="toolbar-label">Resultados</span>
     <div class="toolbar-right">
       <a href="corretor-planos-saude.html" class="btn-outline">+ Nova candidatura</a>
+      <button class="btn-outline btn-export" id="btn-export" disabled>&#8615; Baixar Excel</button>
       <button class="btn-outline btn-danger" id="btn-clear">Limpar todos</button>
     </div>
   </div>
@@ -516,6 +531,10 @@
       return;
     }
 
+    var btnExport = document.getElementById('btn-export');
+    btnExport.disabled = false;
+    btnExport.addEventListener('click', function () { exportToExcel(list); });
+
     /* Stats */
     var statsRow = document.getElementById('stats-row');
     statsRow.style.display = 'grid';
@@ -534,6 +553,73 @@
       container.appendChild(buildCard(list[i]));
     }
   });
+
+  function xmlCell(value, type) {
+    var t = type || 'String';
+    var v = String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+    return '<Cell><Data ss:Type="' + t + '">' + v + '</Data></Cell>';
+  }
+
+  function exportToExcel(list) {
+    var HEADERS = [
+      'Data de envio', 'Nome completo', 'Data de nascimento',
+      'Telefone / WhatsApp', 'E-mail',
+      'Experiência com vendas', 'Histórico profissional',
+      'Familiaridade com o mercado', 'Diferencial pessoal', 'Disponibilidade'
+    ];
+
+    var rows = ['<Row>' + HEADERS.map(function (h) { return xmlCell(h); }).join('') + '</Row>'];
+
+    list.forEach(function (e) {
+      var row = [
+        xmlCell(formatDate(e.timestamp)),
+        xmlCell(e.nome),
+        xmlCell(formatNascimento(e.nascimento)),
+        xmlCell(e.telefone),
+        xmlCell(e.email),
+        xmlCell(LABELS.experiencia_vendas[e.experiencia_vendas] || e.experiencia_vendas),
+        xmlCell(e.historico),
+        xmlCell(LABELS.familiaridade[e.familiaridade] || e.familiaridade),
+        xmlCell(e.diferencial),
+        xmlCell(LABELS.disponibilidade[e.disponibilidade] || e.disponibilidade)
+      ];
+      rows.push('<Row>' + row.join('') + '</Row>');
+    });
+
+    var xml = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<?mso-application progid="Excel.Sheet"?>',
+      '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"',
+      ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">',
+      '<Styles>',
+      '<Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#2C2218" ss:Pattern="Solid"/><Font ss:Color="#B8894A" ss:Bold="1"/></Style>',
+      '</Styles>',
+      '<Worksheet ss:Name="Candidaturas">',
+      '<Table>',
+      rows.join(''),
+      '</Table>',
+      '</Worksheet>',
+      '</Workbook>'
+    ].join('\n');
+
+    var blob = new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    var now  = new Date();
+    var stamp = now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0');
+    a.href     = url;
+    a.download = 'candidaturas-scartezini-' + stamp + '.xls';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
 
   document.getElementById('btn-clear').addEventListener('click', function () {
     if (confirm('Tem certeza? Todos os registros serão removidos permanentemente.')) {

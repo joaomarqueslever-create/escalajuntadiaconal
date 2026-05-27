@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seja um Corretor de Planos de Saúde</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0a6b3c 0%, #0d9652 50%, #1abc6e 100%);
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+
+    /* ── PROGRESS TRACKER ── */
+    .progress-wrapper {
+      max-width: 760px;
+      margin: 0 auto 28px;
+    }
+
+    .progress-label {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: .85;
+    }
+
+    .steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+      cursor: default;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,.3);
+      z-index: 0;
+      transition: background .4s;
+    }
+
+    .step.done:not(:last-child)::after { background: #fff; }
+
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.5);
+      background: rgba(255,255,255,.15);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      transition: all .3s;
+    }
+
+    .step.active .step-circle {
+      background: #fff;
+      border-color: #fff;
+      color: #0a6b3c;
+      box-shadow: 0 0 0 5px rgba(255,255,255,.25);
+    }
+
+    .step.done .step-circle {
+      background: #fff;
+      border-color: #fff;
+      color: #0a6b3c;
+    }
+
+    .step.done .step-circle::after {
+      content: '✓';
+      font-size: 16px;
+    }
+
+    .step.done .step-number { display: none; }
+
+    .step-title {
+      margin-top: 6px;
+      font-size: 11px;
+      color: rgba(255,255,255,.7);
+      text-align: center;
+      font-weight: 500;
+      max-width: 80px;
+      line-height: 1.3;
+    }
+
+    .step.active .step-title { color: #fff; font-weight: 700; }
+    .step.done .step-title { color: rgba(255,255,255,.9); }
+
+    /* ── CARD ── */
+    .card {
+      max-width: 760px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.18);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #0a6b3c, #0d9652);
+      padding: 36px 40px 28px;
+      color: #fff;
+    }
+
+    .card-header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.4);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .card-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .card-header p {
+      font-size: 14px;
+      opacity: .85;
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      display: none;
+      padding: 36px 40px;
+      animation: fadeIn .35s ease;
+    }
+
+    .section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0a6b3c, #1abc6e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .section-heading h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .section-heading p {
+      font-size: 13px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 22px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 7px;
+    }
+
+    label .req { color: #e53935; margin-left: 2px; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #1a1a1a;
+      outline: none;
+      transition: border-color .25s, box-shadow .25s;
+      background: #fafafa;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #0d9652;
+      box-shadow: 0 0 0 4px rgba(13,150,82,.1);
+      background: #fff;
+    }
+
+    textarea { resize: vertical; min-height: 110px; }
+
+    /* radio / checkbox cards */
+    .options { display: flex; flex-direction: column; gap: 10px; }
+
+    .option-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .2s;
+      background: #fafafa;
+    }
+
+    .option-card:hover { border-color: #0d9652; background: #f0fdf6; }
+
+    .option-card input[type="radio"],
+    .option-card input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #0d9652;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .option-card span { font-size: 14px; color: #333; font-weight: 500; }
+
+    .option-card:has(input:checked) {
+      border-color: #0d9652;
+      background: #f0fdf6;
+    }
+
+    /* inline row */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+    @media (max-width: 560px) {
+      .row-2 { grid-template-columns: 1fr; }
+      .card-header, .section { padding: 24px 20px; }
+      .card-header h1 { font-size: 20px; }
+      .steps { gap: 0; }
+      .step-title { font-size: 10px; max-width: 60px; }
+    }
+
+    /* ── NAVIGATION ── */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px 32px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all .2s;
+      letter-spacing: .3px;
+    }
+
+    .btn-back {
+      background: #f3f3f3;
+      color: #555;
+    }
+
+    .btn-back:hover { background: #e6e6e6; }
+
+    .btn-next {
+      background: linear-gradient(135deg, #0a6b3c, #0d9652);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(13,150,82,.35);
+    }
+
+    .btn-next:hover { filter: brightness(1.08); box-shadow: 0 6px 18px rgba(13,150,82,.45); }
+
+    .btn-next:disabled { opacity: .5; cursor: not-allowed; filter: none; }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #0a6b3c, #1abc6e);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(13,150,82,.35);
+    }
+
+    .btn-submit:hover { filter: brightness(1.08); }
+
+    .step-counter {
+      font-size: 13px;
+      color: #999;
+      font-weight: 500;
+    }
+
+    /* ── SUCCESS ── */
+    #success-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 40px;
+    }
+
+    #success-screen .check-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0a6b3c, #1abc6e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 24px rgba(13,150,82,.35);
+    }
+
+    #success-screen h2 { font-size: 24px; color: #1a1a1a; margin-bottom: 12px; }
+    #success-screen p  { font-size: 15px; color: #555; max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+    /* validation hint */
+    .hint { font-size: 12px; color: #e53935; margin-top: 5px; display: none; }
+    .field.invalid input,
+    .field.invalid textarea { border-color: #e53935; }
+    .field.invalid .hint { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- PROGRESS TRACKER -->
+<div class="progress-wrapper">
+  <div class="progress-label">Processo de candidatura</div>
+  <div class="steps" id="steps-track">
+    <div class="step active" data-step="1">
+      <div class="step-circle"><span class="step-number">1</span></div>
+      <div class="step-title">Dados Pessoais</div>
+    </div>
+    <div class="step" data-step="2">
+      <div class="step-circle"><span class="step-number">2</span></div>
+      <div class="step-title">Experiência</div>
+    </div>
+    <div class="step" data-step="3">
+      <div class="step-circle"><span class="step-number">3</span></div>
+      <div class="step-title">Mercado de Saúde</div>
+    </div>
+    <div class="step" data-step="4">
+      <div class="step-circle"><span class="step-number">4</span></div>
+      <div class="step-title">Perfil & Disponibilidade</div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD -->
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="card-header">
+    <div class="badge">Oportunidade para pessoas determinadas</div>
+    <h1>Seja um Corretor de Planos de Saúde</h1>
+    <p>Preencha as informações abaixo para dar o primeiro passo na sua nova carreira.</p>
+  </div>
+
+  <form id="broker-form" novalidate>
+
+    <!-- ── SEÇÃO 1: Dados Pessoais ── -->
+    <div class="section active" id="section-1">
+      <div class="section-heading">
+        <div class="section-icon">👤</div>
+        <div>
+          <h2>Dados Pessoais</h2>
+          <p>Informações básicas de identificação e contato</p>
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field" id="field-nome">
+          <label for="nome">Nome completo <span class="req">*</span></label>
+          <input type="text" id="nome" name="nome" placeholder="Nome e sobrenome" />
+          <div class="hint">Por favor, informe seu nome completo.</div>
+        </div>
+        <div class="field" id="field-nascimento">
+          <label for="nascimento">Data de Nascimento</label>
+          <input type="date" id="nascimento" name="nascimento" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field" id="field-telefone">
+          <label for="telefone">Telefone / WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" />
+          <div class="hint">Por favor, informe um número de telefone válido.</div>
+        </div>
+        <div class="field" id="field-email">
+          <label for="email">E-mail <span class="req">*</span></label>
+          <input type="email" id="email" name="email" placeholder="seu@email.com" />
+          <div class="hint">Por favor, informe um e-mail válido.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO 2: Experiência ── -->
+    <div class="section" id="section-2">
+      <div class="section-heading">
+        <div class="section-icon">💼</div>
+        <div>
+          <h2>Experiência Profissional</h2>
+          <p>Conte-nos sobre seu histórico de vendas e trajetória</p>
+        </div>
+      </div>
+
+      <div class="field" id="field-experiencia-vendas">
+        <label>Já possui experiência com vendas? <span class="req">*</span></label>
+        <div class="options">
+          <label class="option-card">
+            <input type="radio" name="experiencia_vendas" value="sim" />
+            <span>✅ Sim, já tenho experiência com vendas</span>
+          </label>
+          <label class="option-card">
+            <input type="radio" name="experiencia_vendas" value="nao" />
+            <span>🚀 Ainda não, mas estou disposto(a) a aprender</span>
+          </label>
+        </div>
+        <div class="hint">Selecione uma opção.</div>
+      </div>
+
+      <div class="field" id="field-historico">
+        <label for="historico">Fale um pouco sobre suas experiências profissionais <span class="req">*</span></label>
+        <textarea id="historico" name="historico" placeholder="Descreva brevemente sua trajetória profissional, áreas em que atuou, conquistas relevantes..."></textarea>
+        <div class="hint">Por favor, descreva sua experiência profissional.</div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO 3: Mercado de Saúde ── -->
+    <div class="section" id="section-3">
+      <div class="section-heading">
+        <div class="section-icon">🏥</div>
+        <div>
+          <h2>Familiaridade com o Mercado</h2>
+          <p>Avalie seu conhecimento atual sobre planos de saúde</p>
+        </div>
+      </div>
+
+      <div class="field" id="field-familiaridade">
+        <label>Qual é o seu nível de familiaridade com o mercado de planos de saúde? <span class="req">*</span></label>
+        <div class="options">
+          <label class="option-card">
+            <input type="radio" name="familiaridade" value="nenhuma" />
+            <span>🔰 Nenhuma familiaridade</span>
+          </label>
+          <label class="option-card">
+            <input type="radio" name="familiaridade" value="basica" />
+            <span>📗 Básica — conheço conceitos gerais</span>
+          </label>
+          <label class="option-card">
+            <input type="radio" name="familiaridade" value="intermediaria" />
+            <span>📘 Intermediária — já interagi com o mercado</span>
+          </label>
+          <label class="option-card">
+            <input type="radio" name="familiaridade" value="avancada" />
+            <span>📙 Avançada — tenho amplo conhecimento</span>
+          </label>
+        </div>
+        <div class="hint">Selecione uma opção.</div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO 4: Perfil & Disponibilidade ── -->
+    <div class="section" id="section-4">
+      <div class="section-heading">
+        <div class="section-icon">⭐</div>
+        <div>
+          <h2>Perfil &amp; Disponibilidade</h2>
+          <p>Seu diferencial pessoal e como você pode se dedicar</p>
+        </div>
+      </div>
+
+      <div class="field" id="field-diferencial">
+        <label for="diferencial">Qual característica pessoal você considera seu maior diferencial para atuar como corretor? <span class="req">*</span></label>
+        <textarea id="diferencial" name="diferencial" placeholder="Ex: comunicação, persistência, empatia com clientes, capacidade de negociação..."></textarea>
+        <div class="hint">Por favor, descreva seu principal diferencial.</div>
+      </div>
+
+      <div class="field" id="field-disponibilidade">
+        <label>Qual a sua disponibilidade de horário para dedicação a esta oportunidade? <span class="req">*</span></label>
+        <div class="options">
+          <label class="option-card">
+            <input type="radio" name="disponibilidade" value="integral" />
+            <span>🕘 Período integral (Full-time)</span>
+          </label>
+          <label class="option-card">
+            <input type="radio" name="disponibilidade" value="meio" />
+            <span>🕐 Meio período (Part-time)</span>
+          </label>
+          <label class="option-card">
+            <input type="radio" name="disponibilidade" value="flexivel" />
+            <span>📅 Apenas horários flexíveis / fins de semana</span>
+          </label>
+        </div>
+        <div class="hint">Selecione uma opção.</div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="success-screen">
+      <div class="check-icon">✓</div>
+      <h2>Candidatura enviada com sucesso!</h2>
+      <p>Obrigado pelo interesse. Nossa equipe analisará as informações e entrará em contato em breve pelo WhatsApp ou e-mail informado.</p>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="nav" id="nav-bar">
+      <button type="button" class="btn btn-back" id="btn-back" style="visibility:hidden">← Voltar</button>
+      <span class="step-counter" id="step-counter">Passo 1 de 4</span>
+      <button type="button" class="btn btn-next" id="btn-next">Continuar →</button>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  const totalSteps = 4;
+  let current = 1;
+
+  const sections   = () => document.querySelectorAll('.section');
+  const stepNodes  = () => document.querySelectorAll('.step');
+
+  function goTo(n) {
+    sections().forEach((s, i) => s.classList.toggle('active', i + 1 === n));
+    stepNodes().forEach((s, i) => {
+      s.classList.remove('active', 'done');
+      if (i + 1 < n)  s.classList.add('done');
+      if (i + 1 === n) s.classList.add('active');
+    });
+    document.getElementById('step-counter').textContent = `Passo ${n} de ${totalSteps}`;
+    document.getElementById('btn-back').style.visibility = n === 1 ? 'hidden' : 'visible';
+    const btnNext = document.getElementById('btn-next');
+    btnNext.textContent = n === totalSteps ? 'Enviar candidatura ✓' : 'Continuar →';
+    btnNext.className = 'btn ' + (n === totalSteps ? 'btn-submit' : 'btn-next');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ── validation ── */
+  function validateSection(n) {
+    let ok = true;
+
+    function req(fieldId, inputSel) {
+      const wrap = document.getElementById(fieldId);
+      const inp  = wrap.querySelector(inputSel);
+      const empty = inp ? inp.value.trim() === '' : true;
+      wrap.classList.toggle('invalid', empty);
+      if (empty) ok = false;
+    }
+
+    function reqRadio(fieldId, name) {
+      const wrap = document.getElementById(fieldId);
+      const checked = wrap.querySelector(`input[name="${name}"]:checked`);
+      wrap.classList.toggle('invalid', !checked);
+      if (!checked) ok = false;
+    }
+
+    function reqEmail(fieldId) {
+      const wrap  = document.getElementById(fieldId);
+      const input = wrap.querySelector('input');
+      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+      wrap.classList.toggle('invalid', !valid);
+      if (!valid) ok = false;
+    }
+
+    if (n === 1) {
+      req('field-nome',     'input');
+      req('field-telefone', 'input');
+      reqEmail('field-email');
+    }
+    if (n === 2) {
+      reqRadio('field-experiencia-vendas', 'experiencia_vendas');
+      req('field-historico', 'textarea');
+    }
+    if (n === 3) {
+      reqRadio('field-familiaridade', 'familiaridade');
+    }
+    if (n === 4) {
+      req('field-diferencial', 'textarea');
+      reqRadio('field-disponibilidade', 'disponibilidade');
+    }
+    return ok;
+  }
+
+  document.getElementById('btn-next').addEventListener('click', () => {
+    if (!validateSection(current)) return;
+    if (current < totalSteps) {
+      current++;
+      goTo(current);
+    } else {
+      submitForm();
+    }
+  });
+
+  document.getElementById('btn-back').addEventListener('click', () => {
+    if (current > 1) { current--; goTo(current); }
+  });
+
+  function submitForm() {
+    sections().forEach(s => s.classList.remove('active'));
+    document.getElementById('success-screen').style.display = 'block';
+    document.getElementById('nav-bar').style.display = 'none';
+    stepNodes().forEach(s => s.classList.add('done'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* clear invalid on input */
+  document.querySelectorAll('input, textarea').forEach(el => {
+    el.addEventListener('input', () => {
+      const field = el.closest('.field');
+      if (field) field.classList.remove('invalid');
+    });
+  });
+</script>
+</body>
+</html>

@@ -364,7 +364,6 @@
     input[type="text"],
     input[type="email"],
     input[type="tel"],
-    input[type="date"],
     textarea {
       width: 100%;
       padding: 11px 14px;
@@ -601,7 +600,8 @@
         </div>
         <div class="field" id="field-nascimento">
           <label for="nascimento">Data de Nascimento</label>
-          <input type="date" id="nascimento" name="nascimento" />
+          <input type="text" id="nascimento" name="nascimento" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="bday" />
+          <div class="hint" id="hint-nascimento">Data inválida. Use o formato DD/MM/AAAA.</div>
         </div>
       </div>
 
@@ -846,10 +846,66 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  /* ── DATE MASK DD/MM/AAAA ── */
+  (function () {
+    var nascInput = document.getElementById('nascimento');
+
+    nascInput.addEventListener('keydown', function (e) {
+      /* Allow: backspace, delete, tab, arrows, home, end */
+      if ([8, 46, 9, 37, 38, 39, 40, 35, 36].indexOf(e.keyCode) !== -1) return;
+      /* Block non-numeric except slash (typed manually is fine) */
+      if (e.key && e.key.length === 1 && !/[\d/]/.test(e.key)) e.preventDefault();
+    });
+
+    nascInput.addEventListener('input', function () {
+      var raw     = this.value.replace(/\D/g, '').slice(0, 8);
+      var cursor  = this.selectionStart;
+      var prev    = this.value;
+      var masked  = '';
+
+      if (raw.length <= 2) {
+        masked = raw;
+      } else if (raw.length <= 4) {
+        masked = raw.slice(0, 2) + '/' + raw.slice(2);
+      } else {
+        masked = raw.slice(0, 2) + '/' + raw.slice(2, 4) + '/' + raw.slice(4);
+      }
+
+      this.value = masked;
+
+      /* Keep cursor after auto-inserted slash */
+      var added = masked.length - prev.length;
+      if (added > 1) this.setSelectionRange(cursor + added - 1, cursor + added - 1);
+
+      /* Live validation hint */
+      var hint = document.getElementById('hint-nascimento');
+      var wrap = document.getElementById('field-nascimento');
+      if (masked.length === 10) {
+        var valid = isValidDate(masked);
+        wrap.classList.toggle('invalid', !valid);
+        hint.style.display = valid ? 'none' : 'block';
+      } else {
+        wrap.classList.remove('invalid');
+        hint.style.display = 'none';
+      }
+    });
+
+    function isValidDate(str) {
+      /* str is "DD/MM/AAAA" */
+      var p = str.split('/');
+      if (p.length !== 3) return false;
+      var d = parseInt(p[0], 10), m = parseInt(p[1], 10), y = parseInt(p[2], 10);
+      if (isNaN(d) || isNaN(m) || isNaN(y)) return false;
+      if (m < 1 || m > 12 || d < 1 || y < 1900 || y > 2100) return false;
+      var date = new Date(y, m - 1, d);
+      return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
+    }
+  })();
+
   document.querySelectorAll('input, textarea').forEach(function (el) {
     el.addEventListener('input', function () {
       var field = el.closest('.field');
-      if (field) field.classList.remove('invalid');
+      if (field && el.id !== 'nascimento') field.classList.remove('invalid');
     });
   });
 </script>

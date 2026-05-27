@@ -426,10 +426,14 @@
 
   function formatNascimento(val) {
     if (!val) return '—';
+    /* New format: already DD/MM/AAAA */
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(val)) return val;
+    /* Legacy format: YYYY-MM-DD */
     try {
       var parts = val.split('-');
-      return parts[2] + '/' + parts[1] + '/' + parts[0];
-    } catch (e) { return val; }
+      if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0];
+    } catch (e) { /* fall through */ }
+    return val;
   }
 
   function esc(str) {

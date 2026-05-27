@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Candidaturas — Scartezini Seguros e Negócios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #f2ede6;
+      --card:   #ffffff;
+      --border: #ddd7ce;
+      --text:   #1a1714;
+      --muted:  #8a8278;
+      --gold:   #b8894a;
+      --dark:   #2c2218;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--dark);
+      padding: 40px 24px 34px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 40px,
+        rgba(184,137,74,.04) 40px, rgba(184,137,74,.04) 80px
+      );
+      pointer-events: none;
+    }
+
+    .page-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .page-header .company {
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 10px;
+      position: relative;
+      opacity: .8;
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 5vw, 32px);
+      font-weight: 700;
+      color: #f2ede6;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .page-header .subtitle {
+      font-size: 13px;
+      color: rgba(242,237,230,.6);
+      position: relative;
+    }
+
+    .page-header .badge {
+      display: inline-block;
+      background: rgba(184,137,74,.15);
+      border: 1px solid rgba(184,137,74,.4);
+      color: var(--gold);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .06em;
+      margin-top: 14px;
+      position: relative;
+    }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 28px 0 20px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-left {
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .toolbar-right { display: flex; gap: 10px; align-items: center; }
+
+    .btn-outline {
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .18s;
+      letter-spacing: .02em;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .btn-outline:hover { border-color: var(--dark); color: var(--dark); }
+
+    .btn-danger {
+      border-color: #ddd7ce;
+      color: #c03818;
+    }
+
+    .btn-danger:hover { border-color: #c03818; color: #c03818; background: #fff5f3; }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .stat-value span {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    /* ── EMPTY STATE ── */
+    #empty-state {
+      text-align: center;
+      padding: 80px 24px;
+    }
+
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .empty-icon svg { width: 28px; height: 28px; stroke: var(--muted); fill: none; stroke-width: 1.5; }
+
+    #empty-state h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    #empty-state p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+
+    /* ── SUBMISSION CARDS ── */
+    .submission-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(44,34,24,.06);
+      transition: box-shadow .18s;
+    }
+
+    .submission-card:hover { box-shadow: 0 4px 20px rgba(44,34,24,.1); }
+
+    .sub-header {
+      background: var(--dark);
+      padding: 18px 24px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sub-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 30px,
+        rgba(184,137,74,.04) 30px, rgba(184,137,74,.04) 60px
+      );
+      pointer-events: none;
+    }
+
+    .sub-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .sub-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #f2ede6;
+      position: relative;
+    }
+
+    .sub-meta {
+      font-size: 11px;
+      color: rgba(242,237,230,.5);
+      position: relative;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .sub-body {
+      padding: 20px 24px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .f-item {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--bg);
+    }
+
+    .f-item.full { grid-column: 1 / -1; }
+
+    .f-label {
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .f-value {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .f-value.empty { color: var(--muted); font-style: italic; font-size: 13px; }
+
+    .f-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-sim  { background: #e6f5ed; color: #0d4428; }
+    .badge-nao  { background: #fdf1e0; color: #542c04; }
+    .badge-nivel-nenhuma      { background: #f0f0f0; color: #555; }
+    .badge-nivel-basica       { background: #eaf2fc; color: #153d78; }
+    .badge-nivel-intermediaria{ background: #ede8fc; color: #281870; }
+    .badge-nivel-avancada     { background: #e6f5ed; color: #0d4428; }
+    .badge-integral   { background: #e6f5ed; color: #0d4428; }
+    .badge-meio       { background: #eaf2fc; color: #153d78; }
+    .badge-flexivel   { background: #fdf1e0; color: #542c04; }
+
+    @media (max-width: 560px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .f-item.full { grid-column: 1; }
+      .sub-header { flex-direction: column; align-items: flex-start; }
+      .sub-meta { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <p class="company">Scartezini Seguros e Negócios</p>
+  <h1>Candidaturas Recebidas</h1>
+  <p class="subtitle">Corretor de Planos de Saúde</p>
+  <div class="badge" id="total-badge">Carregando...</div>
+</header>
+
+<div class="container">
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <span class="toolbar-left" id="toolbar-label">Resultados</span>
+    <div class="toolbar-right">
+      <a href="corretor-planos-saude.html" class="btn-outline">+ Nova candidatura</a>
+      <button class="btn-outline btn-danger" id="btn-clear">Limpar todos</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="stats-row" style="display:none"></div>
+
+  <!-- CARDS -->
+  <div id="cards-container"></div>
+
+  <!-- EMPTY STATE -->
+  <div id="empty-state" style="display:none">
+    <div class="empty-icon">
+      <svg viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M7 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"/><rect x="7" y="2" width="10" height="4" rx="1"/></svg>
+    </div>
+    <h2>Nenhuma candidatura ainda</h2>
+    <p>Quando alguém preencher o formulário, as candidaturas aparecerão aqui.</p>
+    <a href="corretor-planos-saude.html" class="btn-outline">Abrir formulário</a>
+  </div>
+
+</div>
+
+<script>
+  var LABELS = {
+    experiencia_vendas: { sim: 'Sim', nao: 'Ainda não' },
+    familiaridade: {
+      nenhuma: 'Nenhuma',
+      basica: 'Básica',
+      intermediaria: 'Intermediária',
+      avancada: 'Avançada'
+    },
+    disponibilidade: {
+      integral: 'Período integral',
+      meio: 'Meio período',
+      flexivel: 'Horários flexíveis'
+    }
+  };
+
+  var DISP_BADGE = {
+    integral: 'badge-integral',
+    meio: 'badge-meio',
+    flexivel: 'badge-flexivel'
+  };
+
+  var FAM_BADGE = {
+    nenhuma: 'badge-nivel-nenhuma',
+    basica: 'badge-nivel-basica',
+    intermediaria: 'badge-nivel-intermediaria',
+    avancada: 'badge-nivel-avancada'
+  };
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    try {
+      return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(iso));
+    } catch (e) { return iso; }
+  }
+
+  function formatNascimento(val) {
+    if (!val) return '—';
+    try {
+      var parts = val.split('-');
+      return parts[2] + '/' + parts[1] + '/' + parts[0];
+    } catch (e) { return val; }
+  }
+
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function buildCard(entry) {
+    var expVal   = LABELS.experiencia_vendas[entry.experiencia_vendas] || entry.experiencia_vendas || '—';
+    var famVal   = LABELS.familiaridade[entry.familiaridade] || entry.familiaridade || '—';
+    var dispVal  = LABELS.disponibilidade[entry.disponibilidade] || entry.disponibilidade || '—';
+    var expClass = entry.experiencia_vendas === 'sim' ? 'badge-sim' : 'badge-nao';
+    var famClass = FAM_BADGE[entry.familiaridade] || '';
+    var dispClass = DISP_BADGE[entry.disponibilidade] || '';
+
+    var card = document.createElement('div');
+    card.className = 'submission-card';
+    card.innerHTML =
+      '<div class="sub-header">' +
+        '<div class="sub-name">' + esc(entry.nome || 'Sem nome') + '</div>' +
+        '<div class="sub-meta">Enviado em<br>' + formatDate(entry.timestamp) + '</div>' +
+      '</div>' +
+      '<div class="sub-body">' +
+        '<div class="fields-grid">' +
+          '<div class="f-item">' +
+            '<div class="f-label">Telefone / WhatsApp</div>' +
+            '<div class="f-value">' + esc(entry.telefone || '—') + '</div>' +
+          '</div>' +
+          '<div class="f-item">' +
+            '<div class="f-label">E-mail</div>' +
+            '<div class="f-value">' + esc(entry.email || '—') + '</div>' +
+          '</div>' +
+          '<div class="f-item">' +
+            '<div class="f-label">Data de Nascimento</div>' +
+            '<div class="f-value">' + formatNascimento(entry.nascimento) + '</div>' +
+          '</div>' +
+          '<div class="f-item">' +
+            '<div class="f-label">Experiência com vendas</div>' +
+            '<div class="f-value"><span class="f-badge ' + expClass + '">' + esc(expVal) + '</span></div>' +
+          '</div>' +
+          '<div class="f-item full">' +
+            '<div class="f-label">Histórico profissional</div>' +
+            '<div class="f-value">' + esc(entry.historico || '—') + '</div>' +
+          '</div>' +
+          '<div class="f-item">' +
+            '<div class="f-label">Familiaridade com o mercado</div>' +
+            '<div class="f-value"><span class="f-badge ' + famClass + '">' + esc(famVal) + '</span></div>' +
+          '</div>' +
+          '<div class="f-item">' +
+            '<div class="f-label">Disponibilidade</div>' +
+            '<div class="f-value"><span class="f-badge ' + dispClass + '">' + esc(dispVal) + '</span></div>' +
+          '</div>' +
+          '<div class="f-item full">' +
+            '<div class="f-label">Diferencial pessoal</div>' +
+            '<div class="f-value">' + esc(entry.diferencial || '—') + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    return card;
+  }
+
+  function buildStats(list) {
+    var total   = list.length;
+    var comExp  = list.filter(function (e) { return e.experiencia_vendas === 'sim'; }).length;
+    var integral = list.filter(function (e) { return e.disponibilidade === 'integral'; }).length;
+    var avancada = list.filter(function (e) { return e.familiaridade === 'avancada' || e.familiaridade === 'intermediaria'; }).length;
+
+    return [
+      { label: 'Total de candidaturas', value: total, unit: '' },
+      { label: 'Com experiência em vendas', value: comExp, unit: 'de ' + total },
+      { label: 'Disponibilidade integral', value: integral, unit: 'de ' + total },
+      { label: 'Nível intermediário ou mais', value: avancada, unit: 'de ' + total }
+    ];
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var list = [];
+    try {
+      list = JSON.parse(localStorage.getItem('scartezini_candidaturas') || '[]');
+      if (!Array.isArray(list)) list = [];
+    } catch (e) { list = []; }
+
+    var total = list.length;
+    document.getElementById('total-badge').textContent =
+      total === 0 ? 'Nenhuma candidatura' :
+      total === 1 ? '1 candidatura registrada' :
+      total + ' candidaturas registradas';
+
+    document.getElementById('toolbar-label').textContent =
+      total === 0 ? 'Sem registros' :
+      total === 1 ? '1 resultado' :
+      total + ' resultados';
+
+    if (total === 0) {
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
+
+    /* Stats */
+    var statsRow = document.getElementById('stats-row');
+    statsRow.style.display = 'grid';
+    buildStats(list).forEach(function (s) {
+      var el = document.createElement('div');
+      el.className = 'stat';
+      el.innerHTML =
+        '<div class="stat-label">' + esc(s.label) + '</div>' +
+        '<div class="stat-value">' + s.value + (s.unit ? '<span>' + esc(s.unit) + '</span>' : '') + '</div>';
+      statsRow.appendChild(el);
+    });
+
+    /* Cards — newest first */
+    var container = document.getElementById('cards-container');
+    for (var i = list.length - 1; i >= 0; i--) {
+      container.appendChild(buildCard(list[i]));
+    }
+  });
+
+  document.getElementById('btn-clear').addEventListener('click', function () {
+    if (confirm('Tem certeza? Todos os registros serão removidos permanentemente.')) {
+      localStorage.removeItem('scartezini_candidaturas');
+      location.reload();
+    }
+  });
+</script>
+</body>
+</html>

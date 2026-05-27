@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Seja um Corretor de Planos de Saúde</title>
+  <title>Seja um Corretor — Scartezini Seguros e Negócios</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,6 +26,119 @@
       padding: 32px 16px 48px;
     }
 
+    /* ── SPLASH ── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: var(--dark);
+      transition: opacity .5s ease, visibility .5s ease;
+      overflow: hidden;
+    }
+
+    #splash::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 40px,
+        rgba(184,137,74,.05) 40px, rgba(184,137,74,.05) 80px
+      );
+      pointer-events: none;
+    }
+
+    #splash::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    #splash.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-inner {
+      position: relative;
+      padding: 48px 32px;
+      max-width: 520px;
+      animation: splashIn .7s ease both;
+    }
+
+    @keyframes splashIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .splash-eyebrow {
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 18px;
+      opacity: .8;
+    }
+
+    .splash-company {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 6vw, 44px);
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .splash-tagline {
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(242,237,230,.55);
+      font-weight: 300;
+      margin-bottom: 36px;
+    }
+
+    .splash-divider {
+      width: 60px;
+      height: 1px;
+      background: rgba(184,137,74,.4);
+      margin: 0 auto 36px;
+    }
+
+    .splash-desc {
+      font-size: 14px;
+      color: rgba(242,237,230,.65);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .splash-btn {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--dark);
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 40px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: .03em;
+      transition: filter .2s, transform .15s;
+      box-shadow: 0 4px 20px rgba(184,137,74,.35);
+    }
+
+    .splash-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .splash-btn:active { transform: translateY(0); }
+
     /* ── PROGRESS TRACKER ── */
     .progress-wrapper {
       max-width: 760px;
@@ -41,10 +154,7 @@
       margin-bottom: 14px;
     }
 
-    .steps {
-      display: flex;
-      align-items: center;
-    }
+    .steps { display: flex; align-items: center; }
 
     .step {
       display: flex;
@@ -52,7 +162,6 @@
       align-items: center;
       flex: 1;
       position: relative;
-      cursor: default;
     }
 
     .step:not(:last-child)::after {
@@ -100,11 +209,7 @@
       color: #fff;
     }
 
-    .step.done .step-circle::after {
-      content: '✓';
-      font-size: 15px;
-    }
-
+    .step.done .step-circle::after { content: '✓'; font-size: 15px; }
     .step.done .step-number { display: none; }
 
     .step-title {
@@ -221,8 +326,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
       flex-shrink: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .03em;
     }
 
     .section-heading h2 {
@@ -277,7 +386,6 @@
 
     textarea { resize: vertical; min-height: 110px; }
 
-    /* option cards */
     .options { display: flex; flex-direction: column; gap: 9px; }
 
     .option-card {
@@ -292,10 +400,7 @@
       background: #faf7f3;
     }
 
-    .option-card:hover {
-      border-color: var(--gold);
-      background: #fdf8f2;
-    }
+    .option-card:hover  { border-color: var(--gold); background: #fdf8f2; }
 
     .option-card input[type="radio"] {
       width: 17px;
@@ -307,10 +412,7 @@
 
     .option-card span { font-size: 14px; color: var(--text); font-weight: 400; }
 
-    .option-card:has(input:checked) {
-      border-color: var(--gold);
-      background: #fdf8f2;
-    }
+    .option-card:has(input:checked) { border-color: var(--gold); background: #fdf8f2; }
 
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 
@@ -318,6 +420,7 @@
       .row-2 { grid-template-columns: 1fr; }
       .card-header, .section { padding: 24px 20px; }
       .step-title { font-size: 9px; max-width: 60px; }
+      .nav { padding: 16px 20px 24px; }
     }
 
     /* ── NAVIGATION ── */
@@ -388,7 +491,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 30px;
+      font-size: 28px;
       color: var(--gold);
       margin: 0 auto 24px;
     }
@@ -404,9 +507,26 @@
       font-size: 14px;
       color: var(--muted);
       max-width: 400px;
-      margin: 0 auto;
+      margin: 0 auto 28px;
       line-height: 1.7;
     }
+
+    .btn-results {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 9px 22px;
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .18s;
+    }
+
+    .btn-results:hover { border-color: var(--dark); color: var(--dark); }
 
     /* validation */
     .hint { font-size: 11px; color: #c03818; margin-top: 5px; display: none; }
@@ -416,6 +536,18 @@
   </style>
 </head>
 <body>
+
+<!-- ── SPLASH ── -->
+<div id="splash">
+  <div class="splash-inner">
+    <p class="splash-eyebrow">Bem-vindo a</p>
+    <h1 class="splash-company">Scartezini<br>Seguros e Negócios</h1>
+    <p class="splash-tagline">Corretor de Planos de Saúde</p>
+    <div class="splash-divider"></div>
+    <p class="splash-desc">Estamos em busca de pessoas determinadas para fazer parte do nosso time. Preencha o formulário e dê o primeiro passo na sua nova carreira.</p>
+    <button class="splash-btn" id="splash-btn">Começar Candidatura &rarr;</button>
+  </div>
+</div>
 
 <!-- PROGRESS TRACKER -->
 <div class="progress-wrapper">
@@ -435,7 +567,7 @@
     </div>
     <div class="step" data-step="4">
       <div class="step-circle"><span class="step-number">4</span></div>
-      <div class="step-title">Perfil & Disponibilidade</div>
+      <div class="step-title">Perfil &amp; Disponibilidade</div>
     </div>
   </div>
 </div>
@@ -443,7 +575,6 @@
 <!-- CARD -->
 <div class="card">
 
-  <!-- HEADER -->
   <div class="card-header">
     <div class="badge">Oportunidade para pessoas determinadas</div>
     <h1>Seja um Corretor de Planos de Saúde</h1>
@@ -452,10 +583,10 @@
 
   <form id="broker-form" novalidate>
 
-    <!-- ── SEÇÃO 1: Dados Pessoais ── -->
+    <!-- SEÇÃO 1 -->
     <div class="section active" id="section-1">
       <div class="section-heading">
-        <div class="section-icon">👤</div>
+        <div class="section-icon">DP</div>
         <div>
           <h2>Dados Pessoais</h2>
           <p>Informações básicas de identificação e contato</p>
@@ -488,10 +619,10 @@
       </div>
     </div>
 
-    <!-- ── SEÇÃO 2: Experiência ── -->
+    <!-- SEÇÃO 2 -->
     <div class="section" id="section-2">
       <div class="section-heading">
-        <div class="section-icon">💼</div>
+        <div class="section-icon">EP</div>
         <div>
           <h2>Experiência Profissional</h2>
           <p>Conte-nos sobre seu histórico de vendas e trajetória</p>
@@ -520,10 +651,10 @@
       </div>
     </div>
 
-    <!-- ── SEÇÃO 3: Mercado de Saúde ── -->
+    <!-- SEÇÃO 3 -->
     <div class="section" id="section-3">
       <div class="section-heading">
-        <div class="section-icon">🏥</div>
+        <div class="section-icon">MS</div>
         <div>
           <h2>Familiaridade com o Mercado</h2>
           <p>Avalie seu conhecimento atual sobre planos de saúde</p>
@@ -554,10 +685,10 @@
       </div>
     </div>
 
-    <!-- ── SEÇÃO 4: Perfil & Disponibilidade ── -->
+    <!-- SEÇÃO 4 -->
     <div class="section" id="section-4">
       <div class="section-heading">
-        <div class="section-icon">⭐</div>
+        <div class="section-icon">PD</div>
         <div>
           <h2>Perfil &amp; Disponibilidade</h2>
           <p>Seu diferencial pessoal e como você pode se dedicar</p>
@@ -592,22 +723,38 @@
 
     <!-- SUCCESS -->
     <div id="success-screen">
-      <div class="check-icon">✓</div>
+      <div class="check-icon">&#10003;</div>
       <h2>Candidatura enviada com sucesso!</h2>
       <p>Obrigado pelo interesse. Nossa equipe analisará as informações e entrará em contato em breve pelo WhatsApp ou e-mail informado.</p>
+      <a href="resultados.html" class="btn-results">Ver todas as candidaturas &rarr;</a>
     </div>
 
     <!-- NAVIGATION -->
     <div class="nav" id="nav-bar">
-      <button type="button" class="btn btn-back" id="btn-back" style="visibility:hidden">← Voltar</button>
+      <button type="button" class="btn btn-back" id="btn-back" style="visibility:hidden">&#8592; Voltar</button>
       <span class="step-counter" id="step-counter">Passo 1 de 4</span>
-      <button type="button" class="btn btn-next" id="btn-next">Continuar →</button>
+      <button type="button" class="btn btn-next" id="btn-next">Continuar &rarr;</button>
     </div>
 
   </form>
 </div>
 
 <script>
+  /* ── SPLASH ── */
+  (function () {
+    const splash = document.getElementById('splash');
+    if (sessionStorage.getItem('splash_seen')) {
+      splash.classList.add('hidden');
+      splash.style.display = 'none';
+    }
+    document.getElementById('splash-btn').addEventListener('click', function () {
+      sessionStorage.setItem('splash_seen', '1');
+      splash.classList.add('hidden');
+      setTimeout(function () { splash.style.display = 'none'; }, 500);
+    });
+  })();
+
+  /* ── FORM ── */
   const totalSteps = 4;
   let current = 1;
 
@@ -615,42 +762,42 @@
   const stepNodes = () => document.querySelectorAll('.step');
 
   function goTo(n) {
-    sections().forEach((s, i) => s.classList.toggle('active', i + 1 === n));
-    stepNodes().forEach((s, i) => {
+    sections().forEach(function (s, i) { s.classList.toggle('active', i + 1 === n); });
+    stepNodes().forEach(function (s, i) {
       s.classList.remove('active', 'done');
       if (i + 1 < n)  s.classList.add('done');
       if (i + 1 === n) s.classList.add('active');
     });
-    document.getElementById('step-counter').textContent = `Passo ${n} de ${totalSteps}`;
+    document.getElementById('step-counter').textContent = 'Passo ' + n + ' de ' + totalSteps;
     document.getElementById('btn-back').style.visibility = n === 1 ? 'hidden' : 'visible';
-    const btnNext = document.getElementById('btn-next');
-    btnNext.textContent = n === totalSteps ? 'Enviar candidatura ✓' : 'Continuar →';
+    var btnNext = document.getElementById('btn-next');
+    btnNext.textContent = n === totalSteps ? 'Enviar candidatura' : 'Continuar →';
     btnNext.className = 'btn ' + (n === totalSteps ? 'btn-submit' : 'btn-next');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function validateSection(n) {
-    let ok = true;
+    var ok = true;
 
     function req(fieldId, sel) {
-      const wrap = document.getElementById(fieldId);
-      const inp  = wrap.querySelector(sel);
-      const empty = inp ? inp.value.trim() === '' : true;
+      var wrap  = document.getElementById(fieldId);
+      var inp   = wrap.querySelector(sel);
+      var empty = inp ? inp.value.trim() === '' : true;
       wrap.classList.toggle('invalid', empty);
       if (empty) ok = false;
     }
 
     function reqRadio(fieldId, name) {
-      const wrap    = document.getElementById(fieldId);
-      const checked = wrap.querySelector(`input[name="${name}"]:checked`);
+      var wrap    = document.getElementById(fieldId);
+      var checked = wrap.querySelector('input[name="' + name + '"]:checked');
       wrap.classList.toggle('invalid', !checked);
       if (!checked) ok = false;
     }
 
     function reqEmail(fieldId) {
-      const wrap  = document.getElementById(fieldId);
-      const input = wrap.querySelector('input');
-      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+      var wrap  = document.getElementById(fieldId);
+      var input = wrap.querySelector('input');
+      var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
       wrap.classList.toggle('invalid', !valid);
       if (!valid) ok = false;
     }
@@ -662,27 +809,46 @@
     return ok;
   }
 
-  document.getElementById('btn-next').addEventListener('click', () => {
+  document.getElementById('btn-next').addEventListener('click', function () {
     if (!validateSection(current)) return;
     if (current < totalSteps) { current++; goTo(current); }
     else submitForm();
   });
 
-  document.getElementById('btn-back').addEventListener('click', () => {
+  document.getElementById('btn-back').addEventListener('click', function () {
     if (current > 1) { current--; goTo(current); }
   });
 
   function submitForm() {
-    sections().forEach(s => s.classList.remove('active'));
+    var entry = {
+      timestamp:         new Date().toISOString(),
+      nome:              document.getElementById('nome').value.trim(),
+      nascimento:        document.getElementById('nascimento').value,
+      telefone:          document.getElementById('telefone').value.trim(),
+      email:             document.getElementById('email').value.trim(),
+      experiencia_vendas: (document.querySelector('input[name="experiencia_vendas"]:checked') || {}).value || '',
+      historico:         document.getElementById('historico').value.trim(),
+      familiaridade:     (document.querySelector('input[name="familiaridade"]:checked') || {}).value || '',
+      diferencial:       document.getElementById('diferencial').value.trim(),
+      disponibilidade:   (document.querySelector('input[name="disponibilidade"]:checked') || {}).value || ''
+    };
+
+    try {
+      var list = JSON.parse(localStorage.getItem('scartezini_candidaturas') || '[]');
+      list.push(entry);
+      localStorage.setItem('scartezini_candidaturas', JSON.stringify(list));
+    } catch (e) { /* silently ignore storage errors */ }
+
+    sections().forEach(function (s) { s.classList.remove('active'); });
     document.getElementById('success-screen').style.display = 'block';
     document.getElementById('nav-bar').style.display = 'none';
-    stepNodes().forEach(s => s.classList.add('done'));
+    stepNodes().forEach(function (s) { s.classList.add('done'); });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  document.querySelectorAll('input, textarea').forEach(el => {
-    el.addEventListener('input', () => {
-      const field = el.closest('.field');
+  document.querySelectorAll('input, textarea').forEach(function (el) {
+    el.addEventListener('input', function () {
+      var field = el.closest('.field');
       if (field) field.classList.remove('invalid');
     });
   });
